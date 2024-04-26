@@ -1,6 +1,7 @@
 # Import python packages
 import streamlit as st
-from snowflake.snowpark.functions import col
+from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark.functions import col, when_matched
 import requests
 import pandas as pd
 
@@ -63,6 +64,12 @@ if ingredients_list:
     if time_to_insert:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!', icon="✅")
+        og_dataset = session.table("smoothies.public.orders")
+        edited_dataset = session.create_dataframe(editable_df)
+        og_dataset.merge(edited_dataset
+                     , (og_dataset['name_on_order'] == edited_dataset['name_on_order'])
+                     , [when_matched().update({'ORDER_FILLED': edited_dataset['ORDER_FILLED']})]
+                    )
 
 
 
