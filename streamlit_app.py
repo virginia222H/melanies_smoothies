@@ -59,5 +59,9 @@ if ingredients_list:
         st.success('Your Smoothie is ordered!', icon="✅")
 
 
+st.write("""Orders that need to filled.""")
+session = get_active_session()
+my_dataframe=session.table("smoothies.public.order").filter(col("ORDER_FILLED"))
+editable_df=st.data_editor (my_dataframe)
 
 
