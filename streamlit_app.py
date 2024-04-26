@@ -53,10 +53,7 @@ if ingredients_list:
     #st.write(my_insert_stmt)
     #st.stop()
 
-    st.write("""Orders that need to filled.""")
-    session = get_active_session()
-    my_dataframe=session.table("smoothies.public.order").filter(col("ORDER_FILLED"))
-    editable_df=st.data_editor (my_dataframe)
+    
 
     time_to_insert=st.button('Submit Order')
 
@@ -64,6 +61,13 @@ if ingredients_list:
     if time_to_insert:
         session.sql(my_insert_stmt).collect()
         st.success('Your Smoothie is ordered!', icon="✅")
+
+        st.write("""Orders that need to filled.""")
+        session = get_active_session()
+        my_dataframe=session.table("smoothies.public.order").filter(col("ORDER_FILLED"))
+        editable_df=st.data_editor (my_dataframe)
+
+        
         og_dataset = session.table("smoothies.public.orders")
         edited_dataset = session.create_dataframe(editable_df)
         og_dataset.merge(edited_dataset
